@@ -40,3 +40,4 @@
 2024-07-05T09:47:37  build(rules): clarify the README quickstart
 2024-07-21T16:04:44  fix(output): bump the dev toolchain
 2024-08-07T11:21:51  refactor(docs): support stdin as a source
+2024-08-24T18:38:58  test(scoring): cover the multiline case
