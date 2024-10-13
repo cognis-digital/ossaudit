@@ -43,3 +43,4 @@
 2024-08-24T18:38:58  test(scoring): cover the multiline case
 2024-09-10T13:55:05  ci(rules): trim whitespace in parsed fields
 2024-09-26T08:12:12  feat(output): add a fast path for the common case
+2024-10-13T15:29:19  chore(docs): load rules lazily for faster startup
