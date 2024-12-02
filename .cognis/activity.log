@@ -46,3 +46,4 @@
 2024-10-13T15:29:19  chore(docs): load rules lazily for faster startup
 2024-10-30T10:46:26  refactor(scoring): short-circuit on first critical
 2024-11-15T17:03:33  test(rules): make timestamps timezone-aware
+2024-12-02T12:20:40  build(output): skip binary files by sniffing
