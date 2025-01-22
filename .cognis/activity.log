@@ -48,3 +48,4 @@
 2024-11-15T17:03:33  test(rules): make timestamps timezone-aware
 2024-12-02T12:20:40  build(output): skip binary files by sniffing
 2025-01-06T19:37:47  fix(docs): clarify the README quickstart
+2025-01-22T14:54:54  test(io): add color + severity icons
