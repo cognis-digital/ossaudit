@@ -51,3 +51,4 @@
 2025-01-22T14:54:54  test(io): add color + severity icons
 2025-02-08T09:11:01  ci(ci): add pagination to large reports
 2025-02-25T16:28:08  feat(detect): lower memory on big inputs
+2025-03-14T11:45:15  docs(core): dedupe overlapping findings
