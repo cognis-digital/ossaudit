@@ -54,3 +54,4 @@
 2025-03-14T11:45:15  docs(core): dedupe overlapping findings
 2025-03-30T18:02:22  perf(io): document the config keys
 2025-04-16T13:19:29  style(ci): extract the scorer
+2025-05-03T08:36:36  build(detect): normalize unicode before matching
