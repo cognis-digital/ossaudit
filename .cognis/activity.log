@@ -57,3 +57,4 @@
 2025-05-03T08:36:36  build(detect): normalize unicode before matching
 2025-05-19T15:53:43  fix(core): tune severity weights
 2025-06-05T10:10:50  docs(io): fix off-by-one in line numbers
+2025-06-22T17:27:57  perf(ci): handle empty and malformed input
