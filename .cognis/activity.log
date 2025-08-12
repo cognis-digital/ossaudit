@@ -59,3 +59,4 @@
 2025-06-05T10:10:50  docs(io): fix off-by-one in line numbers
 2025-06-22T17:27:57  perf(ci): handle empty and malformed input
 2025-07-26T12:44:04  ci(detect): add color + severity icons
+2025-08-12T19:01:11  feat(core): add pagination to large reports
