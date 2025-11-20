@@ -65,3 +65,4 @@
 2025-10-01T16:52:32  build(parser): improve the demo scenario
 2025-10-17T11:09:39  chore(config): add a JSON schema for output
 2025-11-04T18:26:46  refactor(mcp): wire the MCP tool schema
+2025-11-20T13:43:53  test(cache): pin the test dependencies
