@@ -66,3 +66,4 @@
 2025-10-17T11:09:39  chore(config): add a JSON schema for output
 2025-11-04T18:26:46  refactor(mcp): wire the MCP tool schema
 2025-11-20T13:43:53  test(cache): pin the test dependencies
+2025-12-07T08:00:00  ci(parser): add --fail-on threshold handling
