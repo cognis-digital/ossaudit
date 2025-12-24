@@ -67,3 +67,4 @@
 2025-11-04T18:26:46  refactor(mcp): wire the MCP tool schema
 2025-11-20T13:43:53  test(cache): pin the test dependencies
 2025-12-07T08:00:00  ci(parser): add --fail-on threshold handling
+2025-12-24T15:17:07  feat(config): assert exit codes in tests
