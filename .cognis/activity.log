@@ -72,3 +72,4 @@
 2026-02-13T17:51:21  refactor(cache): reduce false positives on edge cases
 2026-03-02T12:08:28  style(parser): add a --quiet mode
 2026-03-19T19:25:35  chore(detect): improve error messages with context
+2026-04-04T14:42:42  refactor(core): add a regression fixture
