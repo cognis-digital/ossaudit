@@ -36,7 +36,12 @@ OSS license compliance auditor — AGPL contamination + NOTICE generation — wi
 <a name="features"></a>
 ## Features
 
-- ✅ Scan
+- ✅ Normalize License Id
+- ✅ Classify License
+- ✅ Is Compatible
+- ✅ Audit Dependencies
+- ✅ Load Dependencies
+- ✅ Generate Notice
 - ✅ Runs on Linux/macOS/Windows · Docker · devcontainer
 - ✅ Ports in Python, JavaScript, Go, and Rust (`ports/`)
 
