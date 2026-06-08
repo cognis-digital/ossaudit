@@ -1,0 +1,57 @@
+{
+  "dependencies": [
+    {
+      "name": "requests",
+      "version": "2.32.3",
+      "license": "Apache 2.0",
+      "direct": true,
+      "homepage": "https://requests.readthedocs.io",
+      "copyright": "Copyright 2019 Kenneth Reitz"
+    },
+    {
+      "name": "flask",
+      "version": "3.0.3",
+      "license": "BSD",
+      "direct": true,
+      "homepage": "https://flask.palletsprojects.com"
+    },
+    {
+      "name": "pyyaml",
+      "version": "6.0.1",
+      "license": "MIT",
+      "direct": false
+    },
+    {
+      "name": "crossbeam",
+      "version": "0.8.4",
+      "license": "MIT OR Apache-2.0",
+      "direct": false
+    },
+    {
+      "name": "chart-lib",
+      "version": "4.1.0",
+      "license": "GPL-3.0-only",
+      "direct": true,
+      "homepage": "https://example.com/chart-lib"
+    },
+    {
+      "name": "analytics-sdk",
+      "version": "1.2.0",
+      "license": "AGPL-3.0-only",
+      "direct": true,
+      "homepage": "https://example.com/analytics"
+    },
+    {
+      "name": "mongo-driver",
+      "version": "2.0.0",
+      "license": "SSPL-1.0",
+      "direct": false
+    },
+    {
+      "name": "legacy-thing",
+      "version": "0.9.9",
+      "license": "WTFPL-ish custom terms",
+      "direct": false
+    }
+  ]
+}
