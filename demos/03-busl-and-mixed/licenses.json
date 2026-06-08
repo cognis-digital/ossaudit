@@ -1,0 +1,14 @@
+[
+  {
+    "pkg": "redis-business-source",
+    "license": "BUSL-1.1",
+    "build_target": "proprietary",
+    "incompatible": true
+  },
+  {
+    "pkg": "elasticsearch-elastic",
+    "license": "SSPL-1.0",
+    "build_target": "saas",
+    "incompatible": true
+  }
+]

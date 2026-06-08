@@ -1,0 +1,22 @@
+[
+  {
+    "pkg": "some-agpl-lib",
+    "license": "AGPL-3.0",
+    "build_target": "proprietary",
+    "incompatible": true,
+    "version": "2.4.0"
+  },
+  {
+    "pkg": "another-agpl",
+    "license": "AGPL-3.0",
+    "build_target": "proprietary",
+    "incompatible": true,
+    "version": "1.1.0"
+  },
+  {
+    "pkg": "normal-mit",
+    "license": "MIT",
+    "build_target": "proprietary",
+    "incompatible": false
+  }
+]
