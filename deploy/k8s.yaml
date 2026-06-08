@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: ossaudit, labels: { app: ossaudit } }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: ossaudit } }
+  template:
+    metadata: { labels: { app: ossaudit } }
+    spec:
+      containers:
+        - name: ossaudit
+          image: ghcr.io/cognis-digital/ossaudit:latest
+          ports: [{ containerPort: 8000 }]
+          resources:
+            requests: { cpu: "50m", memory: "64Mi" }
+            limits: { cpu: "500m", memory: "256Mi" }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: ossaudit }
+spec:
+  selector: { app: ossaudit }
+  ports: [{ port: 80, targetPort: 8000 }]
