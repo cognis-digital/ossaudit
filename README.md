@@ -125,7 +125,17 @@ Pipes into your stack: **SARIF** for code-scanning, **JSON** for anything, an **
 <div align="right"><a href="#top">↑ back to top</a></div>
 
 <a name="install-anywhere"></a>
-## Install anywhere
+## Install — every way, every platform
+
+```bash
+pip install "git+https://github.com/cognis-digital/ossaudit.git"    # pip (works today)
+pipx install "git+https://github.com/cognis-digital/ossaudit.git"   # isolated CLI
+uv tool install "git+https://github.com/cognis-digital/ossaudit.git" # uv
+pip install cognis-ossaudit                                          # PyPI (when published)
+docker run --rm ghcr.io/cognis-digital/ossaudit:latest --help        # Docker
+brew install cognis-digital/tap/ossaudit                             # Homebrew tap
+curl -fsSL https://raw.githubusercontent.com/cognis-digital/ossaudit/main/install.sh | sh
+```
 
 | Linux | macOS | Windows | Docker | Cloud |
 |---|---|---|---|---|
