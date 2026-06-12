@@ -16,7 +16,7 @@
 </div>
 
 ```bash
-pip install cognis-ossaudit
+pip install "git+https://github.com/cognis-digital/ossaudit.git"
 ossaudit scan .            # → prioritized findings in seconds
 ```
 
@@ -51,7 +51,7 @@ OSS license compliance auditor — AGPL contamination + NOTICE generation — wi
 ## Quick start
 
 ```bash
-pip install cognis-ossaudit
+pip install "git+https://github.com/cognis-digital/ossaudit.git"
 ossaudit --version
 ossaudit scan .                       # scan current project
 ossaudit scan . --format json         # machine-readable
