@@ -78,13 +78,8 @@ $ ossaudit scan .
 
 ```mermaid
 flowchart LR
-  A[Input: file / dir / API] --> B[Collectors]
-  B --> C[Rules / Analyzers]
-  C --> D[Scorer]
-  D --> E{Reporters}
-  E --> F[Table]
-  E --> G[JSON / SARIF]
-  E --> H[MCP tool -. drives .-> AI agents]
+  IN[target / manifest] --> P[ossaudit<br/>checks + rules]
+  P --> OUT[findings (JSON / SARIF)]
 ```
 
 <div align="right"><a href="#top">↑ back to top</a></div>
