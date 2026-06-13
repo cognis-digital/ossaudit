@@ -20,6 +20,12 @@ pip install "git+https://github.com/cognis-digital/ossaudit.git"
 ossaudit scan .            # → prioritized findings in seconds
 ```
 
+<!-- cognis:layman:start -->
+## What is this?
+
+ossaudit checks the open-source libraries your project depends on and tells you if any of them carry license terms that could create legal problems for your business. For example, some licenses (like AGPL) require you to release your own source code if you use the library — ossaudit flags those so you can swap them out before they become an issue. It also generates a ready-to-ship NOTICE file that credits all your open-source dependencies, which many licenses require. It runs entirely on your own machine, takes seconds, and works in any CI pipeline.
+<!-- cognis:layman:end -->
+
 ## Contents
 
 - [Why ossaudit?](#why) · [Features](#features) · [Quick start](#quick-start) · [Example](#example) · [Architecture](#architecture) · [AI stack](#ai-stack) · [How it compares](#how-it-compares) · [Integrations](#integrations) · [Install anywhere](#install-anywhere) · [Related](#related) · [Contributing](#contributing)
@@ -48,6 +54,42 @@ OSS license compliance auditor — AGPL contamination + NOTICE generation — wi
 <div align="right"><a href="#top">↑ back to top</a></div>
 
 <a name="quick-start"></a>
+<!-- cognis:install:start -->
+## Install
+
+`ossaudit` is source-available (not published to PyPI) — every method below installs
+straight from GitHub. Pick whichever you prefer; the one-line scripts auto-detect
+the best tool available on your machine.
+
+**One-liner (Linux / macOS):**
+```sh
+curl -fsSL https://raw.githubusercontent.com/cognis-digital/ossaudit/HEAD/install.sh | sh
+```
+
+**One-liner (Windows PowerShell):**
+```powershell
+irm https://raw.githubusercontent.com/cognis-digital/ossaudit/HEAD/install.ps1 | iex
+```
+
+**Or install manually — any one of:**
+```sh
+pipx install "git+https://github.com/cognis-digital/ossaudit.git"     # isolated (recommended)
+uv tool install "git+https://github.com/cognis-digital/ossaudit.git"  # uv
+pip install "git+https://github.com/cognis-digital/ossaudit.git"      # pip
+```
+
+**From source:**
+```sh
+git clone https://github.com/cognis-digital/ossaudit.git
+cd ossaudit && pip install .
+```
+
+Then run:
+```sh
+ossaudit --help
+```
+<!-- cognis:install:end -->
+
 ## Quick start
 
 ```bash
