@@ -20,6 +20,34 @@ pip install cognis-ossaudit
 ossaudit scan .            # → prioritized findings in seconds
 ```
 
+## Usage — step by step
+
+`ossaudit` audits a dependency manifest for license-policy violations and
+generates a NOTICE attribution file. Console script: `ossaudit`.
+
+1. **Install** from a clone:
+   ```bash
+   pip install -e .
+   ```
+2. **Audit a manifest** against a distribution policy preset (exit code `2` on violations):
+   ```bash
+   ossaudit audit deps.json --policy proprietary
+   ```
+3. **Generate a NOTICE** file from the same manifest:
+   ```bash
+   ossaudit notice deps.json --project "Acme Server" -o NOTICE.txt
+   ```
+4. **Read the output** — `--format json` gives a structured report for pipelines:
+   ```bash
+   ossaudit --format json audit deps.json | jq '.violations, .passed'
+   ```
+   Exit codes: `0` passed, `2` policy violations found, `1` error.
+5. **Automate in CI** — fail on AGPL/copyleft contamination:
+   ```yaml
+   - run: pip install -e .
+   - run: ossaudit audit deps.json --policy proprietary
+   ```
+
 ## Contents
 
 - [Why ossaudit?](#why) · [Features](#features) · [Quick start](#quick-start) · [Example](#example) · [Architecture](#architecture) · [AI stack](#ai-stack) · [How it compares](#how-it-compares) · [Integrations](#integrations) · [Install anywhere](#install-anywhere) · [Related](#related) · [Contributing](#contributing)
