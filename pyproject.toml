@@ -36,3 +36,6 @@ ossaudit = "ossaudit.cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["ossaudit"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
