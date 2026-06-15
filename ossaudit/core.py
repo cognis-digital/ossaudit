@@ -11,6 +11,7 @@ No network access, standard library only.
 from __future__ import annotations
 
 import json
+import os
 import re
 from dataclasses import dataclass, field, asdict
 from typing import Any, Dict, List, Optional, Tuple
@@ -332,12 +333,21 @@ def load_dependencies(path_or_obj: Any) -> List[Dependency]:
       * a JSON list of objects
       * a JSON object with a top-level "dependencies" list
     Each object: {name, version, license, direct?, homepage?, copyright?}.
+
+    *path_or_obj* may be a ``str`` or ``pathlib.Path``; any other non-list/
+    non-dict value raises ``ValueError`` with a descriptive message.
     """
-    if isinstance(path_or_obj, str):
-        with open(path_or_obj, "r", encoding="utf-8") as fh:
+    if isinstance(path_or_obj, (str, bytes, os.PathLike)):
+        path_str = os.fspath(path_or_obj)
+        with open(path_str, "r", encoding="utf-8") as fh:
             data = json.load(fh)
-    else:
+    elif isinstance(path_or_obj, (list, dict)):
         data = path_or_obj
+    else:
+        raise ValueError(
+            f"manifest must be a file path, a list, or a dict; "
+            f"got {type(path_or_obj).__name__}"
+        )
 
     if isinstance(data, dict):
         data = data.get("dependencies", [])

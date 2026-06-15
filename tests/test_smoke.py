@@ -1,6 +1,9 @@
 """Smoke tests for OSSAUDIT. Standard library only, no network."""
+import io
 import os
+import pathlib
 import sys
+import tempfile
 import unittest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -114,6 +117,88 @@ class TestCli(unittest.TestCase):
     def test_version_constants(self):
         self.assertEqual(TOOL_NAME, "ossaudit")
         self.assertTrue(TOOL_VERSION)
+
+
+class TestHardening(unittest.TestCase):
+    """Edge-case and error-path tests added during hardening."""
+
+    # --- load_dependencies edge cases ---
+
+    def test_load_empty_list(self):
+        """An empty manifest list should return an empty deps list, not raise."""
+        deps = load_dependencies([])
+        self.assertEqual(deps, [])
+
+    def test_load_pathlib_path(self):
+        """load_dependencies should accept a pathlib.Path, not just str."""
+        deps = load_dependencies(pathlib.Path(DEMO))
+        self.assertGreater(len(deps), 0)
+
+    def test_load_invalid_type_raises(self):
+        """Passing an unexpected type (e.g. int) must raise ValueError."""
+        with self.assertRaises(ValueError):
+            load_dependencies(42)
+
+    def test_load_malformed_json_exit_error(self):
+        """A file containing invalid JSON should produce exit code 1 with no traceback."""
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".json", delete=False
+        ) as fh:
+            fh.write("{ this is not json }")
+            bad_path = fh.name
+        try:
+            rc = main(["audit", bad_path])
+            self.assertEqual(rc, 1)
+        finally:
+            os.unlink(bad_path)
+
+    # --- CLI I/O error paths ---
+
+    def test_permission_error_exit_code(self):
+        """Passing a directory as manifest (PermissionError / IsADirectoryError)
+        must return exit 1 and print a clean error, not raise."""
+        # Use the tests directory itself — guaranteed to exist and not be JSON.
+        tests_dir = os.path.dirname(__file__)
+        stderr_buf = io.StringIO()
+        old_stderr = sys.stderr
+        sys.stderr = stderr_buf
+        try:
+            rc = main(["audit", tests_dir])
+        finally:
+            sys.stderr = old_stderr
+        self.assertEqual(rc, 1)
+        # Should have printed something useful to stderr.
+        self.assertTrue(stderr_buf.getvalue().strip())
+
+    def test_notice_output_bad_dir_exit_error(self):
+        """--output pointing at a non-existent directory returns exit 1 cleanly."""
+        bad_output = os.path.join(
+            "definitely-does-not-exist-dir", "NOTICE.txt"
+        )
+        stderr_buf = io.StringIO()
+        old_stderr = sys.stderr
+        sys.stderr = stderr_buf
+        try:
+            rc = main(["notice", DEMO, "--output", bad_output])
+        finally:
+            sys.stderr = old_stderr
+        self.assertEqual(rc, 1)
+        self.assertTrue(stderr_buf.getvalue().strip())
+
+    # --- audit on empty deps ---
+
+    def test_audit_empty_deps_passes(self):
+        """Auditing an empty dependency list should pass with zero violations."""
+        report = audit_dependencies([], policy="proprietary")
+        self.assertTrue(report.passed)
+        self.assertEqual(report.total, 0)
+        self.assertEqual(report.violations, 0)
+
+    def test_notice_empty_deps(self):
+        """generate_notice on an empty list should produce valid output."""
+        text = generate_notice([], project="Empty Project")
+        self.assertIn("Empty Project", text)
+        self.assertIn("Licenses present:", text)
 
 
 if __name__ == "__main__":

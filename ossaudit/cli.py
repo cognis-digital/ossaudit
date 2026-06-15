@@ -76,8 +76,16 @@ def _cmd_notice(args) -> int:
         }, indent=2))
     else:
         if args.output:
-            with open(args.output, "w", encoding="utf-8") as fh:
-                fh.write(text)
+            try:
+                with open(args.output, "w", encoding="utf-8") as fh:
+                    fh.write(text)
+            except OSError as exc:
+                print(
+                    f"{TOOL_NAME}: error: cannot write output file"
+                    f" '{args.output}': {exc.strerror}",
+                    file=sys.stderr,
+                )
+                return EXIT_ERROR
             print(f"Wrote NOTICE for {len(deps)} dependencies to {args.output}")
         else:
             print(text)
@@ -121,6 +129,13 @@ def main(argv: Optional[List[str]] = None) -> int:
         return EXIT_ERROR
     except (ValueError, json.JSONDecodeError) as exc:
         print(f"{TOOL_NAME}: error: {exc}", file=sys.stderr)
+        return EXIT_ERROR
+    except OSError as exc:
+        # Catches PermissionError, IsADirectoryError, and other I/O failures
+        # that are not already handled above.
+        msg = exc.strerror or str(exc)
+        fname = f" '{exc.filename}'" if exc.filename else ""
+        print(f"{TOOL_NAME}: error: {msg}{fname}", file=sys.stderr)
         return EXIT_ERROR
 
 
