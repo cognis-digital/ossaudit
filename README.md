@@ -17,7 +17,7 @@
 
 ```bash
 pip install cognis-ossaudit
-ossaudit scan .            # → prioritized findings in seconds
+ossaudit audit deps.json --policy proprietary   # → prioritized license findings in seconds
 ```
 
 ## Usage — step by step
@@ -50,7 +50,7 @@ generates a NOTICE attribution file. Console script: `ossaudit`.
 
 ## Contents
 
-- [Why ossaudit?](#why) · [Features](#features) · [Quick start](#quick-start) · [Example](#example) · [Architecture](#architecture) · [AI stack](#ai-stack) · [How it compares](#how-it-compares) · [Integrations](#integrations) · [Install anywhere](#install-anywhere) · [Related](#related) · [Contributing](#contributing)
+- [Why ossaudit?](#why) · [Features](#features) · [Quick start](#quick-start) · [Example](#example) · [Demos](#demos) · [Architecture](#architecture) · [AI stack](#ai-stack) · [How it compares](#how-it-compares) · [Integrations](#integrations) · [Install anywhere](#install-anywhere) · [Related](#related) · [Contributing](#contributing)
 
 <a name="why"></a>
 ## Why ossaudit?
@@ -64,12 +64,13 @@ OSS license compliance auditor — AGPL contamination + NOTICE generation — wi
 <a name="features"></a>
 ## Features
 
-- ✅ Normalize License Id
-- ✅ Classify License
-- ✅ Is Compatible
-- ✅ Audit Dependencies
-- ✅ Load Dependencies
-- ✅ Generate Notice
+- ✅ Normalize license ids — aliases, `+`/`-or-later`, **SPDX `OR`/`AND` expressions with nested parentheses & precedence**
+- ✅ Classify copyleft strength — permissive · public-domain · weak · strong · network · proprietary
+- ✅ Compatibility against 5 distribution-policy presets
+- ✅ Audit a dependency manifest (table · **JSON** · **SARIF 2.1.0**)
+- ✅ Generate a NOTICE / attribution file
+- ✅ 80+ license knowledge base incl. FTL, BSL-1.0, OpenSSL, CC-BY, SSPL, BUSL-1.1, Elastic-2.0
+- ✅ 11 real-use-case demos in [`demos/`](demos/) — SaaS, mobile, GPL project, dual-license, source-available
 - ✅ Runs on Linux/macOS/Windows · Docker · devcontainer
 - ✅ Ports in Python, JavaScript, Go, and Rust (`ports/`)
 
@@ -81,9 +82,10 @@ OSS license compliance auditor — AGPL contamination + NOTICE generation — wi
 ```bash
 pip install cognis-ossaudit
 ossaudit --version
-ossaudit scan .                       # scan current project
-ossaudit scan . --format json         # machine-readable
-ossaudit scan . --fail-on high        # CI gate (non-zero exit)
+ossaudit audit deps.json --policy proprietary        # audit a manifest (exit 2 on violations)
+ossaudit --format json  audit deps.json              # machine-readable
+ossaudit --format sarif audit deps.json > out.sarif  # SARIF 2.1.0 for code-scanning
+ossaudit notice deps.json --project "My App" -o NOTICE.txt
 ```
 
 <div align="right"><a href="#top">↑ back to top</a></div>
@@ -92,11 +94,49 @@ ossaudit scan . --fail-on high        # CI gate (non-zero exit)
 ## Example
 
 ```text
-$ ossaudit scan .
-  [HIGH    ] OSS-001  example finding             (./src/app.py)
-  [MEDIUM  ] OSS-002  another signal              (./config.yaml)
+$ ossaudit audit demos/01-basic/deps.json --policy proprietary
+Policy: proprietary   Deps: 8   Violations: 4
+------------------------------------------------------------------------------
+STATUS    SEV  NAME                    VERSION     LICENSE
+------------------------------------------------------------------------------
+VIOLATION 5    analytics-sdk           1.2.0       AGPL-3.0-only
+VIOLATION 5    mongo-driver            2.0.0       SSPL-1.0
+VIOLATION 4    chart-lib               4.1.0       GPL-3.0-only
+VIOLATION 3    legacy-thing            0.9.9       NOASSERTION
+ok        1    requests                2.32.3      Apache-2.0
+...
+RESULT: FAIL          # exit code 2
+```
 
-  2 findings · risk score 5 · 38ms
+Add `--format sarif` to upload the same findings to GitHub code-scanning, or
+`--format json` to pipe into any tool.
+
+<div align="right"><a href="#top">↑ back to top</a></div>
+
+<a name="demos"></a>
+## Demos — real situations, ready to run
+
+Each folder under [`demos/`](demos/) has a manifest in the tool's real input
+format plus a `SCENARIO.md` (where the data came from, what to expect, the exact
+command, and how to act). Every demo is verified to fire.
+
+| Demo | Situation | Policy | Result |
+|---|---|---|---|
+| [`01-basic`](demos/01-basic) | Mixed manifest, messy spellings + SPDX `OR` | proprietary | FAIL |
+| [`01-agpl-contamination`](demos/01-agpl-contamination) | AGPL PDF libs (iText, Ghostscript) in a paid product | proprietary | FAIL |
+| [`02-clean-license`](demos/02-clean-license) | All-permissive service, then generate NOTICE | proprietary | PASS |
+| [`03-busl-and-mixed`](demos/03-busl-and-mixed) | Source-available BUSL / Elastic-2.0 (Redis, CockroachDB, ES) | proprietary | FAIL |
+| [`04-saas-agpl-database`](demos/04-saas-agpl-database) | SaaS data-layer SSPL/AGPL (MongoDB, Elasticsearch, Grafana) | proprietary | FAIL |
+| [`05-mobile-app-store`](demos/05-mobile-app-store) | GPL media libs in an App Store binary (VLC, ffmpeg-gpl) | distribute-binary | FAIL |
+| [`06-permissive-only-relicense`](demos/06-permissive-only-relicense) | Same manifest, two policies — weak copyleft surfaces | permissive-only | FAIL |
+| [`07-weak-copyleft-lgpl`](demos/07-weak-copyleft-lgpl) | LGPL is fine when you dynamic-link (Qt, FFmpeg) | proprietary | PASS |
+| [`08-gpl-oss-project`](demos/08-gpl-oss-project) | GPL project: GPL OK, AGPL (MinIO) still blocked | gpl-project | FAIL |
+| [`09-dual-license-spdx`](demos/09-dual-license-spdx) | Rust dual/tri-licensing + nested SPDX expressions | proprietary | FAIL |
+| [`10-internal-tool-audit`](demos/10-internal-tool-audit) | Clean Node/TS app — the CI happy path + SARIF | proprietary | PASS |
+
+```bash
+python -m ossaudit audit demos/04-saas-agpl-database/deps.json --policy proprietary
+python -m ossaudit --format sarif audit demos/10-internal-tool-audit/deps.json --policy proprietary > ossaudit.sarif
 ```
 
 <div align="right"><a href="#top">↑ back to top</a></div>

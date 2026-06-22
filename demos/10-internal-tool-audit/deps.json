@@ -1,0 +1,53 @@
+{
+  "dependencies": [
+    {
+      "name": "react",
+      "version": "18.3.1",
+      "license": "MIT",
+      "direct": true,
+      "homepage": "https://react.dev"
+    },
+    {
+      "name": "lodash",
+      "version": "4.17.21",
+      "license": "MIT",
+      "direct": true,
+      "homepage": "https://lodash.com"
+    },
+    {
+      "name": "axios",
+      "version": "1.7.2",
+      "license": "MIT",
+      "direct": true,
+      "homepage": "https://axios-http.com"
+    },
+    {
+      "name": "express",
+      "version": "4.19.2",
+      "license": "MIT",
+      "direct": true,
+      "homepage": "https://expressjs.com"
+    },
+    {
+      "name": "typescript",
+      "version": "5.5.2",
+      "license": "Apache-2.0",
+      "direct": false,
+      "homepage": "https://www.typescriptlang.org"
+    },
+    {
+      "name": "caniuse-lite",
+      "version": "1.0.30001636",
+      "license": "CC-BY-4.0",
+      "direct": false,
+      "homepage": "https://github.com/browserslist/caniuse-lite"
+    },
+    {
+      "name": "spdx-license-ids",
+      "version": "3.0.18",
+      "license": "CC0-1.0",
+      "direct": false,
+      "homepage": "https://github.com/jslicense/spdx-license-ids"
+    }
+  ]
+}

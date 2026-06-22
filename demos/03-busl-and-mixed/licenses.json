@@ -1,14 +1,34 @@
-[
-  {
-    "pkg": "redis-business-source",
-    "license": "BUSL-1.1",
-    "build_target": "proprietary",
-    "incompatible": true
-  },
-  {
-    "pkg": "elasticsearch-elastic",
-    "license": "SSPL-1.0",
-    "build_target": "saas",
-    "incompatible": true
-  }
-]
+{
+  "dependencies": [
+    {
+      "name": "redis-stack",
+      "version": "7.4.0",
+      "license": "BUSL-1.1",
+      "direct": true,
+      "homepage": "https://redis.io",
+      "copyright": "Copyright Redis Ltd."
+    },
+    {
+      "name": "elasticsearch",
+      "version": "8.14.1",
+      "license": "Elastic-2.0",
+      "direct": true,
+      "homepage": "https://www.elastic.co"
+    },
+    {
+      "name": "cockroachdb",
+      "version": "24.1.1",
+      "license": "BUSL-1.1",
+      "direct": false,
+      "homepage": "https://www.cockroachlabs.com",
+      "copyright": "Copyright Cockroach Labs, Inc."
+    },
+    {
+      "name": "valkey",
+      "version": "7.2.5",
+      "license": "BSD-3-Clause",
+      "direct": false,
+      "homepage": "https://valkey.io"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "dependencies": [
+    {
+      "name": "fastapi",
+      "version": "0.111.0",
+      "license": "MIT",
+      "direct": true,
+      "homepage": "https://fastapi.tiangolo.com"
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.30.1",
+      "license": "BSD-3-Clause",
+      "direct": true,
+      "homepage": "https://www.uvicorn.org"
+    },
+    {
+      "name": "pydantic",
+      "version": "2.7.4",
+      "license": "MIT",
+      "direct": true,
+      "homepage": "https://docs.pydantic.dev"
+    },
+    {
+      "name": "sqlalchemy",
+      "version": "2.0.31",
+      "license": "MIT",
+      "direct": true,
+      "homepage": "https://www.sqlalchemy.org"
+    },
+    {
+      "name": "mongodb-server",
+      "version": "7.0.11",
+      "license": "SSPL-1.0",
+      "direct": true,
+      "homepage": "https://www.mongodb.com",
+      "copyright": "Copyright (C) MongoDB, Inc."
+    },
+    {
+      "name": "elasticsearch",
+      "version": "7.10.2",
+      "license": "SSPL-1.0",
+      "direct": false,
+      "homepage": "https://www.elastic.co"
+    },
+    {
+      "name": "grafana",
+      "version": "8.5.0",
+      "license": "AGPL-3.0-only",
+      "direct": false,
+      "homepage": "https://grafana.com",
+      "copyright": "Copyright Grafana Labs"
+    },
+    {
+      "name": "redis-py",
+      "version": "5.0.7",
+      "license": "MIT",
+      "direct": true,
+      "homepage": "https://github.com/redis/redis-py"
+    }
+  ]
+}

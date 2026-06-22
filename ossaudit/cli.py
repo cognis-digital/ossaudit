@@ -26,6 +26,7 @@ from .core import (
     audit_dependencies,
     generate_notice,
     load_dependencies,
+    to_sarif,
 )
 
 EXIT_OK = 0
@@ -60,6 +61,8 @@ def _cmd_audit(args) -> int:
     report = audit_dependencies(deps, policy=args.policy)
     if args.format == "json":
         print(json.dumps(report.to_dict(), indent=2))
+    elif args.format == "sarif":
+        print(json.dumps(to_sarif(report, manifest_path=args.manifest), indent=2))
     else:
         print(_render_audit_table(report))
     return EXIT_OK if report.passed else EXIT_VIOLATIONS
@@ -91,8 +94,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--version", action="version",
                    version=f"{TOOL_NAME} {TOOL_VERSION}")
-    p.add_argument("--format", choices=["table", "json"], default="table",
-                   help="output format (default: table)")
+    p.add_argument("--format", choices=["table", "json", "sarif"], default="table",
+                   help="output format (default: table). sarif = SARIF 2.1.0 "
+                        "for code-scanning (audit only)")
     sub = p.add_subparsers(dest="command", required=True)
 
     a = sub.add_parser("audit", help="scan a manifest for policy violations")

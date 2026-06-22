@@ -1,0 +1,54 @@
+{
+  "dependencies": [
+    {
+      "name": "numpy",
+      "version": "2.0.0",
+      "license": "BSD-3-Clause",
+      "direct": true,
+      "homepage": "https://numpy.org"
+    },
+    {
+      "name": "requests",
+      "version": "2.32.3",
+      "license": "Apache 2.0",
+      "direct": true,
+      "homepage": "https://requests.readthedocs.io",
+      "copyright": "Copyright Kenneth Reitz"
+    },
+    {
+      "name": "click",
+      "version": "8.1.7",
+      "license": "BSD-3-Clause",
+      "direct": true,
+      "homepage": "https://palletsprojects.com/p/click"
+    },
+    {
+      "name": "rich",
+      "version": "13.7.1",
+      "license": "MIT",
+      "direct": true,
+      "homepage": "https://github.com/Textualize/rich"
+    },
+    {
+      "name": "chardet",
+      "version": "5.2.0",
+      "license": "LGPL-2.1-or-later",
+      "direct": false,
+      "homepage": "https://github.com/chardet/chardet"
+    },
+    {
+      "name": "certifi",
+      "version": "2024.6.2",
+      "license": "MPL-2.0",
+      "direct": false,
+      "homepage": "https://github.com/certifi/python-certifi"
+    },
+    {
+      "name": "tqdm",
+      "version": "4.66.4",
+      "license": "MPL-2.0",
+      "direct": true,
+      "homepage": "https://github.com/tqdm/tqdm"
+    }
+  ]
+}

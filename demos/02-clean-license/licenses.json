@@ -1,20 +1,25 @@
-[
-  {
-    "pkg": "fastapi",
-    "license": "MIT",
-    "build_target": "proprietary",
-    "incompatible": false
-  },
-  {
-    "pkg": "pydantic",
-    "license": "MIT",
-    "build_target": "proprietary",
-    "incompatible": false
-  },
-  {
-    "pkg": "requests",
-    "license": "Apache-2.0",
-    "build_target": "proprietary",
-    "incompatible": false
-  }
-]
+{
+  "dependencies": [
+    {
+      "name": "fastapi",
+      "version": "0.111.0",
+      "license": "MIT",
+      "direct": true,
+      "homepage": "https://fastapi.tiangolo.com"
+    },
+    {
+      "name": "pydantic",
+      "version": "2.7.4",
+      "license": "MIT",
+      "direct": true,
+      "homepage": "https://docs.pydantic.dev"
+    },
+    {
+      "name": "requests",
+      "version": "2.32.3",
+      "license": "Apache-2.0",
+      "direct": true,
+      "homepage": "https://requests.readthedocs.io"
+    }
+  ]
+}

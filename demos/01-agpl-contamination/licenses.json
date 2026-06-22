@@ -1,22 +1,27 @@
-[
-  {
-    "pkg": "some-agpl-lib",
-    "license": "AGPL-3.0",
-    "build_target": "proprietary",
-    "incompatible": true,
-    "version": "2.4.0"
-  },
-  {
-    "pkg": "another-agpl",
-    "license": "AGPL-3.0",
-    "build_target": "proprietary",
-    "incompatible": true,
-    "version": "1.1.0"
-  },
-  {
-    "pkg": "normal-mit",
-    "license": "MIT",
-    "build_target": "proprietary",
-    "incompatible": false
-  }
-]
+{
+  "dependencies": [
+    {
+      "name": "itext7-core",
+      "version": "8.0.4",
+      "license": "AGPL-3.0-only",
+      "direct": true,
+      "homepage": "https://itextpdf.com",
+      "copyright": "Copyright iText Group NV"
+    },
+    {
+      "name": "ghostscript",
+      "version": "10.03.1",
+      "license": "AGPL-3.0-or-later",
+      "direct": true,
+      "homepage": "https://www.ghostscript.com",
+      "copyright": "Copyright Artifex Software, Inc."
+    },
+    {
+      "name": "newtonsoft-json",
+      "version": "13.0.3",
+      "license": "MIT",
+      "direct": true,
+      "homepage": "https://www.newtonsoft.com/json"
+    }
+  ]
+}

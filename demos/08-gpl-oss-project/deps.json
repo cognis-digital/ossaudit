@@ -1,0 +1,47 @@
+{
+  "dependencies": [
+    {
+      "name": "glibc",
+      "version": "2.39",
+      "license": "LGPL-2.1-or-later",
+      "direct": false,
+      "homepage": "https://www.gnu.org/software/libc"
+    },
+    {
+      "name": "readline",
+      "version": "8.2",
+      "license": "GPL-3.0-or-later",
+      "direct": true,
+      "homepage": "https://tiswww.case.edu/php/chet/readline/rltop.html"
+    },
+    {
+      "name": "ncurses",
+      "version": "6.5",
+      "license": "X11",
+      "direct": true,
+      "homepage": "https://invisible-island.net/ncurses"
+    },
+    {
+      "name": "gnutls",
+      "version": "3.8.5",
+      "license": "LGPL-2.1-or-later",
+      "direct": true,
+      "homepage": "https://www.gnutls.org"
+    },
+    {
+      "name": "coreutils",
+      "version": "9.5",
+      "license": "GPL-3.0-or-later",
+      "direct": false,
+      "homepage": "https://www.gnu.org/software/coreutils"
+    },
+    {
+      "name": "minio",
+      "version": "RELEASE.2024-06-13",
+      "license": "AGPL-3.0-or-later",
+      "direct": true,
+      "homepage": "https://min.io",
+      "copyright": "Copyright MinIO, Inc."
+    }
+  ]
+}

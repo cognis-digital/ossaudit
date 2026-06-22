@@ -1,0 +1,46 @@
+{
+  "dependencies": [
+    {
+      "name": "serde",
+      "version": "1.0.203",
+      "license": "MIT OR Apache-2.0",
+      "direct": true,
+      "homepage": "https://serde.rs"
+    },
+    {
+      "name": "tokio",
+      "version": "1.38.0",
+      "license": "MIT",
+      "direct": true,
+      "homepage": "https://tokio.rs"
+    },
+    {
+      "name": "rustls",
+      "version": "0.23.10",
+      "license": "Apache-2.0 OR ISC OR MIT",
+      "direct": true,
+      "homepage": "https://github.com/rustls/rustls"
+    },
+    {
+      "name": "ring",
+      "version": "0.17.8",
+      "license": "ISC AND MIT AND OpenSSL",
+      "direct": false,
+      "homepage": "https://github.com/briansmith/ring"
+    },
+    {
+      "name": "qt-bindings",
+      "version": "0.6.0",
+      "license": "LGPL-3.0-only OR GPL-3.0-only OR Commercial",
+      "direct": true,
+      "homepage": "https://example.org/qt-bindings"
+    },
+    {
+      "name": "font-kit",
+      "version": "0.13.0",
+      "license": "(MIT OR Apache-2.0) AND GPL-2.0-or-later",
+      "direct": false,
+      "homepage": "https://github.com/servo/font-kit"
+    }
+  ]
+}
