@@ -1,5 +1,19 @@
 # Sources
 
+## Authoritative data feeds (edge / air-gap)
+
+Real, keyless intelligence feeds consumed by this tool via the bundled
+stdlib ingestion layer (`ossaudit/datafeeds.py` + `ossaudit/data_feeds_2026.json`).
+Each feed is fetched over HTTPS, cached to disk (`COGNIS_FEEDS_CACHE`), and
+re-served offline (`--offline`) for disconnected / air-gapped deployment.
+
+| Feed id | Source | URL | Used for |
+|---------|--------|-----|----------|
+| `osv` | OSV.dev vulnerability query | `https://api.osv.dev/v1/query` | `vulnscan`: map `{name, version, ecosystem}` to known CVE/GHSA vulnerabilities |
+
+Manage with `ossaudit feeds list|update|get <id> [--offline]`. Defensive /
+authorized-use intelligence only.
+
 <!-- cognis-2026-live-sources -->
 
 ## Live 2026 sources (auto-expanded)

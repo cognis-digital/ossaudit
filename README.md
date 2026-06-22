@@ -48,6 +48,57 @@ generates a NOTICE attribution file. Console script: `ossaudit`.
    - run: ossaudit audit deps.json --policy proprietary
    ```
 
+## Vulnerability scanning (OSV.dev) — edge / air-gap
+
+A dependency can pass the license audit and still ship a **known
+vulnerability**. `ossaudit vulnscan` cross-references each
+`{name, version, ecosystem}` in the manifest against
+[**OSV.dev**](https://osv.dev) — the open, authoritative vulnerability database
+spanning PyPI / npm / Go / Maven / crates.io / RubyGems / NuGet / … — and
+surfaces the real **CVE / GHSA** ids, severity, and CVSS-derived bands.
+
+```bash
+ossaudit vulnscan deps.json                 # exit 2 if any known vuln, 0 if clean
+ossaudit --format json vulnscan deps.json   # structured report for pipelines
+```
+
+Each manifest entry may carry an `"ecosystem"` field (`PyPI`, `npm`, `Go`,
+`crates.io`, …); otherwise `--ecosystem` sets the default.
+
+### Edge / air-gap deployment
+
+The OSV layer is built on a **stdlib-only ingestion module**
+(`ossaudit.datafeeds`) that fetches over HTTPS, caches to disk
+(`COGNIS_FEEDS_CACHE`, default `~/.cache/cognis-feeds`), and re-serves
+**offline** so the scan keeps working on disconnected / military / edge gear.
+
+```bash
+# 1. connected host: warm the OSV cache for an exact manifest
+ossaudit feeds warm deps.json
+
+# 2. snapshot the cache for sneakernet transfer
+python -m ossaudit.datafeeds snapshot-export osv-cache.tar.gz
+
+# 3. air-gapped host: import + scan with ZERO network
+python -m ossaudit.datafeeds snapshot-import osv-cache.tar.gz
+ossaudit vulnscan deps.json --offline
+```
+
+`ossaudit feeds list|update|get <id> [--offline]` manages the bundled feed
+cache (restricted to the feed ids this tool consumes — see below). `--offline`
+reads cache only and never touches the network.
+
+### Data sources
+
+| Feed | Source | URL | Key |
+|------|--------|-----|-----|
+| `osv` | OSV.dev vulnerability query | `https://api.osv.dev/v1/query` | keyless |
+
+Catalog: [`ossaudit/data_feeds_2026.json`](ossaudit/data_feeds_2026.json) ·
+ingestion: [`ossaudit/datafeeds.py`](ossaudit/datafeeds.py) ·
+demo: [`demos/11-osv-vulnscan`](demos/11-osv-vulnscan).
+Defensive / authorized-use intelligence only.
+
 ## Contents
 
 - [Why ossaudit?](#why) · [Features](#features) · [Quick start](#quick-start) · [Example](#example) · [Demos](#demos) · [Architecture](#architecture) · [AI stack](#ai-stack) · [How it compares](#how-it-compares) · [Integrations](#integrations) · [Install anywhere](#install-anywhere) · [Related](#related) · [Contributing](#contributing)

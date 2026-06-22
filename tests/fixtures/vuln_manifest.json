@@ -1,0 +1,7 @@
+{
+  "dependencies": [
+    {"name": "django", "version": "3.2.0", "license": "BSD-3-Clause", "ecosystem": "PyPI"},
+    {"name": "lodash", "version": "4.17.11", "license": "MIT", "ecosystem": "npm"},
+    {"name": "ossaudit-safe-shim", "version": "9.9.9", "license": "Apache-2.0", "ecosystem": "PyPI"}
+  ]
+}

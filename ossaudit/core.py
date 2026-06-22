@@ -351,6 +351,9 @@ class Dependency:
     direct: bool = True
     homepage: str = ""
     copyright: str = ""
+    # Optional package ecosystem (PyPI/npm/Go/...) used by OSV vulnerability
+    # cross-referencing; empty => fall back to the scan default.
+    ecosystem: str = ""
 
 
 @dataclass
@@ -488,6 +491,7 @@ def load_dependencies(path_or_obj: Any) -> List[Dependency]:
                 direct=bool(entry.get("direct", True)),
                 homepage=str(entry.get("homepage", "")).strip(),
                 copyright=str(entry.get("copyright", "")).strip(),
+                ecosystem=str(entry.get("ecosystem", "")).strip(),
             )
         )
     return deps
