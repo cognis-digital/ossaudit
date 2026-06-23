@@ -1,0 +1,68 @@
+name: ports
+on: [push, pull_request]
+permissions:
+  contents: read
+
+jobs:
+  javascript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Smoke test (Node port)
+        working-directory: ports/javascript
+        run: node test.js
+      - name: CLI parity check
+        run: |
+          set -e
+          node ports/javascript/index.js audit demos/01-basic/deps.json --policy proprietary && exit 1 || \
+            test $? -eq 2  # exit 2 == violations found, as designed
+
+  go:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Build + test (Go port)
+        working-directory: ports/go
+        run: |
+          go vet ./...
+          go test ./...
+          go build -o ossaudit-go .
+      - name: CLI parity check
+        working-directory: ports/go
+        run: |
+          ./ossaudit-go audit ../../demos/01-basic/deps.json --policy proprietary && exit 1 || \
+            test $? -eq 2
+
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build + test (Rust port)
+        working-directory: ports/rust
+        run: |
+          cargo test
+          cargo build --release
+      - name: CLI parity check
+        working-directory: ports/rust
+        run: |
+          ./target/release/ossaudit audit ../../demos/01-basic/deps.json --policy proprietary && exit 1 || \
+            test $? -eq 2
+
+  shell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Smoke test (POSIX shell port)
+        run: sh ports/shell/test.sh
+      - name: shellcheck (best effort)
+        run: |
+          if command -v shellcheck >/dev/null 2>&1; then
+            shellcheck -s sh ports/shell/ossaudit.sh ports/shell/test.sh || true
+          fi

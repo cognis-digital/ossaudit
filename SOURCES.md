@@ -14,6 +14,53 @@ re-served offline (`--offline`) for disconnected / air-gapped deployment.
 Manage with `ossaudit feeds list|update|get <id> [--offline]`. Defensive /
 authorized-use intelligence only.
 
+## Bundled offline vulnerability corpus (262k OSV advisories)
+
+The repo ships `ossaudit/cognis_vulndb.jsonl.gz` — a consolidated, compact
+snapshot of **262,351 real OSV advisories** across PyPI / npm / Go / Maven /
+RubyGems / crates.io / NuGet. It is the offline baseline that lets
+`ossaudit vulndb` resolve real CVEs (e.g. Log4Shell `CVE-2021-44228`) the moment
+the repo is cloned — **no network, no key, no fabricated data**. Each record is
+distilled from the upstream OSV record to: `id` (GHSA/PYSEC/RUSTSEC/…),
+`aliases` (incl. real CVE ids), `ecosystem`, `summary`, `severity` (CVSS vector
+when published), affected `packages`, `published`/`modified` dates, and a
+reference count.
+
+```bash
+ossaudit vulndb count                       # 262351
+ossaudit vulndb cve CVE-2021-44228          # Log4Shell -> GHSA-jfh8-c2jp-5v3q (CRITICAL)
+ossaudit vulndb pkg lodash --ecosystem npm  # advisories affecting a package
+ossaudit vulndb enrich deps.json            # match a whole manifest (exit 2 if vulnerable)
+ossaudit vulndb resolve sbom.txt            # resolve CVE refs found in an SBOM/text
+```
+
+### Refreshing / extending the corpus on the edge
+
+The bundle is a baseline, not a frozen artifact. On a connected host, refresh or
+extend it from the authoritative upstreams below, then sneakernet the result
+into an air-gapped enclave. All three are real, keyless (NVD optionally keyed),
+and already catalogued in `ossaudit/data_feeds_2026.json`:
+
+| Source | Endpoint | Scope |
+|--------|----------|-------|
+| **OSV.dev** (bulk) | `https://osv-vulnerabilities.storage.googleapis.com/{ecosystem}/all.zip` | per-ecosystem full advisory dumps (PyPI/npm/Go/Maven/crates.io/RubyGems/NuGet) |
+| **OSV.dev** (query) | `https://api.osv.dev/v1/query` | single `{name, version, ecosystem}` lookups (the `osv` feed) |
+| **NIST NVD** | `https://services.nvd.nist.gov/rest/json/cves/2.0` | authoritative CVE detail (keyless is rate-limited; `NVD_API_KEY` raises limits) |
+| **GitHub GHSA** | `https://api.github.com/advisories` | GitHub Security Advisories (GHSA ids, ecosystem-aware) |
+
+```bash
+# connected host: pull a fresh per-ecosystem OSV bulk dump
+python -m ossaudit.datafeeds update osv          # warms the query feed
+# (rebuild the bundled jsonl.gz from OSV/NVD/GHSA dumps, then commit it)
+
+# air-gap: snapshot the feed cache for sneakernet
+python -m ossaudit.datafeeds snapshot-export osv-cache.tar.gz
+python -m ossaudit.datafeeds snapshot-import osv-cache.tar.gz   # on the enclave
+```
+
+`ossaudit vulndb` reads only the on-disk bundle, so it keeps working with zero
+network regardless of how stale or fresh the bundle is.
+
 <!-- cognis-2026-live-sources -->
 
 ## Live 2026 sources (auto-expanded)

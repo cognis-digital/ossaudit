@@ -1,0 +1,11 @@
+Internal triage note — third-party component review.
+
+The following CVEs were flagged by an upstream SBOM scan and need to be
+cross-referenced against our offline advisory corpus:
+
+  - CVE-2021-44228  (Log4Shell, Apache Log4j 2)
+  - CVE-2021-23337  (lodash command injection)
+  - cve-2019-10906  (Jinja2 sandbox escape — lowercase to test the matcher)
+  - CVE-1999-0001   (very old, should not resolve in this OSV corpus)
+
+End of note.

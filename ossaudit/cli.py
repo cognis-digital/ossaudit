@@ -4,6 +4,7 @@ Subcommands:
   audit    - scan a dependency manifest for license-policy violations
   notice   - generate a NOTICE / attribution file from the manifest
   vulnscan - cross-reference dependencies against OSV.dev known vulnerabilities
+  vulndb   - match deps / CVE refs against the BUNDLED 262k OSV corpus (offline)
   feeds    - manage the bundled edge/air-gap data-feed cache (OSV)
 
 Global:
@@ -127,6 +128,123 @@ def _cmd_vulnscan(args) -> int:
     return EXIT_OK if report.clean else EXIT_VIOLATIONS
 
 
+def _render_vulndb_table(report) -> str:
+    out: List[str] = []
+    out.append(f"vulndb (offline)   corpus: {report.source} "
+               f"({report.db_records} records)")
+    out.append(f"Deps: {report.total}   Vulnerable: {report.vulnerable}")
+    out.append("-" * 78)
+    out.append(f"{'SEVERITY':<10}{'#':<4}{'NAME':<22}{'VERSION':<12}{'ECOSYSTEM':<12}")
+    out.append("-" * 78)
+    for f in report.findings:
+        name = f.name[:21]
+        ver = f.version[:11]
+        eco = f.ecosystem[:11]
+        out.append(f"{f.max_severity:<10}{f.vuln_count:<4}{name:<22}{ver:<12}{eco:<12}")
+    out.append("-" * 78)
+    for f in report.findings:
+        if f.vuln_count:
+            ids = ", ".join((f.cve_ids or f.osv_ids)[:6])
+            out.append(f"  ! {f.name} {f.version}: {f.vuln_count} advisory(ies) [{ids}]")
+            if f.summaries:
+                out.append(f"      {f.summaries[0][:72]}")
+    out.append("")
+    out.append("RESULT: " + ("CLEAN" if report.clean else "VULNERABLE"))
+    return "\n".join(out)
+
+
+def _cmd_vulndb(args) -> int:
+    from .vulndb import (
+        LocalVulnDB, enrich_manifest, resolve_cve_refs, severity_of, cve_aliases,
+    )
+    db = LocalVulnDB()
+
+    if args.vulndb_cmd == "count":
+        print(db.count())
+        return EXIT_OK
+
+    if args.vulndb_cmd == "stats":
+        ecos = db.ecosystems()
+        if args.format == "json":
+            print(json.dumps({"records": db.count(), "ecosystems": ecos}, indent=2))
+        else:
+            print(f"corpus: {db.path.name}   records: {db.count()}")
+            for eco, n in ecos.items():
+                print(f"  {eco:<14} {n}")
+        return EXIT_OK
+
+    if args.vulndb_cmd == "cve":
+        recs = db.by_cve(args.id)
+        if args.format == "json":
+            print(json.dumps(recs, indent=2))
+        else:
+            if not recs:
+                print(f"{args.id}: no advisory in the bundled corpus")
+            for r in recs:
+                print(f"{r.get('id')}  [{r.get('ecosystem')}]  sev={severity_of(r)}")
+                print(f"  aliases: {', '.join(r.get('aliases') or []) or '-'}")
+                print(f"  packages: {', '.join(r.get('packages') or []) or '-'}")
+                print(f"  {(r.get('summary') or '')[:74]}")
+        return EXIT_OK if recs else EXIT_VIOLATIONS
+
+    if args.vulndb_cmd == "pkg":
+        recs = db.by_package(args.name, ecosystem=args.ecosystem or None)
+        if args.format == "json":
+            print(json.dumps(recs, indent=2))
+        else:
+            print(f"{args.name}"
+                  + (f" [{args.ecosystem}]" if args.ecosystem else "")
+                  + f": {len(recs)} advisory(ies) in the bundled corpus")
+            for r in recs[: args.limit]:
+                cves = ", ".join(cve_aliases(r)) or r.get("id", "")
+                print(f"  {r.get('id')}  sev={severity_of(r)}  {cves}")
+                print(f"    {(r.get('summary') or '')[:72]}")
+        return EXIT_OK if not recs else EXIT_VIOLATIONS
+
+    if args.vulndb_cmd == "search":
+        recs = db.search(args.text, limit=args.limit)
+        if args.format == "json":
+            print(json.dumps(recs, indent=2))
+        else:
+            print(f"'{args.text}': {len(recs)} match(es) (limit {args.limit})")
+            for r in recs:
+                print(f"  {r.get('id')}  [{r.get('ecosystem')}]  "
+                      f"{(r.get('summary') or '')[:60]}")
+        return EXIT_OK
+
+    if args.vulndb_cmd == "enrich":
+        deps = load_dependencies(args.manifest)
+        report = enrich_manifest(deps, db, default_ecosystem=args.ecosystem)
+        if args.format in ("json", "sarif"):
+            print(json.dumps(report.to_dict(), indent=2))
+        else:
+            print(_render_vulndb_table(report))
+        return EXIT_OK if report.clean else EXIT_VIOLATIONS
+
+    if args.vulndb_cmd == "resolve":
+        # Resolve CVE references found in a text/SBOM file against the corpus.
+        from .vulndb import extract_cve_refs
+        with open(args.file, "r", encoding="utf-8", errors="replace") as fh:
+            refs = extract_cve_refs(fh.read())
+        resolved = resolve_cve_refs(refs, db)
+        hits = {k: v for k, v in resolved.items() if v}
+        if args.format == "json":
+            print(json.dumps({
+                "refs_found": refs,
+                "resolved": {k: [r.get("id") for r in v] for k, v in resolved.items()},
+            }, indent=2))
+        else:
+            print(f"CVE refs in {args.file}: {len(refs)}   "
+                  f"resolved in corpus: {len(hits)}")
+            for ref in refs:
+                marker = "OK " if resolved[ref] else "-- "
+                ids = ", ".join(r.get("id", "") for r in resolved[ref][:4])
+                print(f"  {marker}{ref}  {ids}")
+        return EXIT_OK
+
+    return EXIT_ERROR
+
+
 def _cmd_feeds(args) -> int:
     from . import datafeeds
     catalog = datafeeds.load_catalog()
@@ -227,6 +345,46 @@ def build_parser() -> argparse.ArgumentParser:
     v.add_argument("--offline", action="store_true",
                    help="serve OSV results from the local cache only (air-gap)")
     v.set_defaults(func=_cmd_vulnscan)
+
+    # vulndb — offline matching against the BUNDLED 262k OSV corpus.
+    vd = sub.add_parser(
+        "vulndb",
+        help="match deps / CVE refs against the bundled 262k OSV corpus (offline)")
+    vdsub = vd.add_subparsers(dest="vulndb_cmd", required=True)
+
+    vdc = vdsub.add_parser("count", help="print the number of bundled advisories")
+    vdc.set_defaults(func=_cmd_vulndb)
+
+    vds = vdsub.add_parser("stats", help="record counts per ecosystem")
+    vds.set_defaults(func=_cmd_vulndb)
+
+    vdcve = vdsub.add_parser("cve", help="look up a CVE/GHSA id in the corpus")
+    vdcve.add_argument("id", help="CVE-YYYY-NNNN / GHSA-xxxx / PYSEC-... id")
+    vdcve.set_defaults(func=_cmd_vulndb)
+
+    vdpkg = vdsub.add_parser("pkg", help="advisories affecting a package")
+    vdpkg.add_argument("name", help="package name")
+    vdpkg.add_argument("--ecosystem", default="",
+                       help="restrict to an OSV ecosystem (PyPI/npm/Go/...)")
+    vdpkg.add_argument("--limit", type=int, default=20)
+    vdpkg.set_defaults(func=_cmd_vulndb)
+
+    vdsearch = vdsub.add_parser("search", help="substring search advisory summaries")
+    vdsearch.add_argument("text", help="text to find in summaries")
+    vdsearch.add_argument("--limit", type=int, default=25)
+    vdsearch.set_defaults(func=_cmd_vulndb)
+
+    vden = vdsub.add_parser(
+        "enrich", help="match every dep in a manifest against the bundled corpus")
+    vden.add_argument("manifest", help="path to dependency manifest JSON")
+    vden.add_argument("--ecosystem", default="",
+                      help="default ecosystem for deps that declare none")
+    vden.set_defaults(func=_cmd_vulndb)
+
+    vdr = vdsub.add_parser(
+        "resolve", help="resolve CVE references in a text/SBOM file against the corpus")
+    vdr.add_argument("file", help="path to a text/SBOM file containing CVE ids")
+    vdr.set_defaults(func=_cmd_vulndb)
 
     fe = sub.add_parser("feeds",
                         help="manage the bundled OSV data-feed cache (edge/air-gap)")

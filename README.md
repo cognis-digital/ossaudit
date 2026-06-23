@@ -121,9 +121,11 @@ OSS license compliance auditor — AGPL contamination + NOTICE generation — wi
 - ✅ Audit a dependency manifest (table · **JSON** · **SARIF 2.1.0**)
 - ✅ Generate a NOTICE / attribution file
 - ✅ 80+ license knowledge base incl. FTL, BSL-1.0, OpenSSL, CC-BY, SSPL, BUSL-1.1, Elastic-2.0
-- ✅ 11 real-use-case demos in [`demos/`](demos/) — SaaS, mobile, GPL project, dual-license, source-available
+- ✅ **Vulnerability cross-reference** — `vulnscan` (live OSV.dev) **and** `vulndb` (bundled **262k-advisory** offline corpus, no network)
+- ✅ **Air-gap CVE lookups** — resolve real CVEs (Log4Shell, lodash, django) straight from the clone
+- ✅ 12 real-use-case demos in [`demos/`](demos/) — SaaS, mobile, GPL project, dual-license, source-available, offline vuln-DB
 - ✅ Runs on Linux/macOS/Windows · Docker · devcontainer
-- ✅ Ports in Python, JavaScript, Go, and Rust (`ports/`)
+- ✅ Ports in Python, JavaScript, Go, Rust, and POSIX shell (`ports/`) — each mirrors the `audit` CLI and is CI-built/tested
 
 <div align="right"><a href="#top">↑ back to top</a></div>
 
@@ -184,6 +186,8 @@ command, and how to act). Every demo is verified to fire.
 | [`08-gpl-oss-project`](demos/08-gpl-oss-project) | GPL project: GPL OK, AGPL (MinIO) still blocked | gpl-project | FAIL |
 | [`09-dual-license-spdx`](demos/09-dual-license-spdx) | Rust dual/tri-licensing + nested SPDX expressions | proprietary | FAIL |
 | [`10-internal-tool-audit`](demos/10-internal-tool-audit) | Clean Node/TS app — the CI happy path + SARIF | proprietary | PASS |
+| [`11-osv-vulnscan`](demos/11-osv-vulnscan) | Live OSV.dev vulnerability cross-reference (warm + air-gap) | n/a | VULNERABLE |
+| [`12-offline-vulndb`](demos/12-offline-vulndb) | **Offline** enrichment vs the bundled 262k OSV corpus (Log4Shell resolves) | n/a | VULNERABLE |
 
 ```bash
 python -m ossaudit audit demos/04-saas-agpl-database/deps.json --policy proprietary
@@ -209,7 +213,7 @@ flowchart LR
 `ossaudit` is interoperable with every popular way of using AI:
 
 - **MCP server** — `ossaudit mcp` (Claude Desktop, Cursor, Cognis.Studio, [uncensored-fleet](https://github.com/cognis-digital/uncensored-fleet))
-- **OpenAI-compatible / JSON** — pipe `ossaudit scan . --format json` into any agent or LLM
+- **OpenAI-compatible / JSON** — pipe `ossaudit --format json audit deps.json` (or `vulndb enrich deps.json`) into any agent or LLM
 - **LangChain · CrewAI · AutoGen · LlamaIndex** — wrap the CLI/JSON as a tool in one line
 - **CI / scripts** — exit codes + SARIF for non-AI pipelines
 
@@ -289,6 +293,35 @@ Source-available under the **Cognis Open Collaboration License (COCL) v1.0** —
 
 <div align="center"><sub><b><a href="https://cognis.digital">Cognis Digital</a></b> · one of 170+ tools in the <a href="https://github.com/cognis-digital/cognis-neural-suite">Cognis Neural Suite</a> · <i>Making Tomorrow Better Today</i></sub></div>
 
-## Bundled vulnerability database
+## Bundled vulnerability database (fully offline, no network)
 
-Ships `ossaudit/cognis_vulndb.jsonl.gz` — **262,351 real vulnerabilities** (OSV: PyPI/npm/Go/Maven/RubyGems/crates.io/NuGet) with detailed metadata (CVE/GHSA aliases, ecosystem, severity/CVSS, affected packages, dates). Pure-stdlib offline loader `vulndb_local.VulnDB` (`count`/`by_cve`/`by_package`/`search`), air-gap ready. Refresh/extend via `datafeeds.py bulk`.
+Ships `ossaudit/cognis_vulndb.jsonl.gz` — **262,351 real vulnerabilities** (OSV: PyPI/npm/Go/Maven/RubyGems/crates.io/NuGet) with detailed metadata (CVE/GHSA aliases, ecosystem, severity/CVSS, affected packages, dates). Pure-stdlib offline loaders (`ossaudit.vulndb.LocalVulnDB`, `vulndb_local.VulnDB`) and a wired **`vulndb` subcommand** — air-gap ready, no key, no fabricated data. Refresh/extend from NVD/OSV/GHSA on the edge (see [SOURCES.md](SOURCES.md)).
+
+```bash
+ossaudit vulndb count                          # 262351 advisories bundled
+ossaudit vulndb cve CVE-2021-44228             # Log4Shell -> GHSA-jfh8-c2jp-5v3q  [Maven]  sev=CRITICAL
+ossaudit vulndb pkg lodash --ecosystem npm     # every advisory affecting a package
+ossaudit vulndb stats                          # record counts per ecosystem
+ossaudit vulndb search "remote code execution" # substring search over summaries
+ossaudit vulndb enrich deps.json               # match a whole manifest (exit 2 if vulnerable)
+ossaudit vulndb resolve sbom.txt               # resolve CVE refs found in any text/SBOM
+```
+
+```text
+$ ossaudit vulndb enrich demos/12-offline-vulndb/deps.json
+vulndb (offline)   corpus: cognis_vulndb.jsonl.gz (262351 records)
+Deps: 5   Vulnerable: 4
+------------------------------------------------------------------------------
+SEVERITY  #   NAME                  VERSION     ECOSYSTEM
+------------------------------------------------------------------------------
+CRITICAL  315 django                3.2.0       PyPI
+CRITICAL  16  jinja2                2.4.1       PyPI
+CRITICAL  11  org.apache.logging.lo 2.14.1      Maven
+CRITICAL  10  lodash                4.17.11     npm
+NONE      0   ossaudit-clean-shim   9.9.9       PyPI
+------------------------------------------------------------------------------
+  ! org.apache.logging.log4j:log4j-core 2.14.1: 11 advisory(ies) [CVE-2021-44228, CVE-2021-45046, ...]
+RESULT: VULNERABLE          # exit code 2
+```
+
+**`vulnscan` vs `vulndb`** — `vulnscan` queries OSV.dev *live* and caches results for air-gap replay; `vulndb` matches against the *bundled* corpus with zero network from the first clone. Use `vulndb` on disconnected/edge hosts and `vulnscan` when you want the freshest upstream answer. See [`demos/12-offline-vulndb`](demos/12-offline-vulndb).

@@ -1,0 +1,9 @@
+{
+  "dependencies": [
+    {"name": "lodash", "version": "4.17.11", "license": "MIT", "ecosystem": "npm"},
+    {"name": "django", "version": "3.2.0", "license": "BSD-3-Clause", "ecosystem": "PyPI"},
+    {"name": "jinja2", "version": "2.4.1", "license": "BSD-3-Clause", "ecosystem": "PyPI"},
+    {"name": "org.apache.logging.log4j:log4j-core", "version": "2.14.1", "license": "Apache-2.0", "ecosystem": "Maven"},
+    {"name": "ossaudit-clean-shim", "version": "9.9.9", "license": "Apache-2.0", "ecosystem": "PyPI"}
+  ]
+}

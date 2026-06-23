@@ -1,9 +1,12 @@
 {
   "name": "@cognis/ossaudit",
-  "version": "0.2.0",
-  "description": "JavaScript port of ossaudit (Cognis Neural Suite)",
+  "version": "0.3.0",
+  "description": "JavaScript port of ossaudit — OSS license-compliance auditor (Cognis Neural Suite)",
   "bin": {
     "ossaudit": "index.js"
+  },
+  "scripts": {
+    "test": "node test.js"
   },
   "license": "LicenseRef-COCL-1.0",
   "type": "module"
