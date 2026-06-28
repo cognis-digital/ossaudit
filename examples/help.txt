@@ -1,0 +1,23 @@
+$ ossaudit-emit --help
+
+usage: ossaudit [-h] [--version] [--format {table,json,sarif}]
+                {audit,notice,vulnscan,vulndb,feeds} ...
+
+OSS license compliance auditor: AGPL contamination + NOTICE generation.
+
+positional arguments:
+  {audit,notice,vulnscan,vulndb,feeds}
+    audit               scan a manifest for policy violations
+    notice              generate a NOTICE attribution file
+    vulnscan            cross-reference deps against OSV.dev known
+                        vulnerabilities
+    vulndb              match deps / CVE refs against the bundled 262k OSV
+                        corpus (offline)
+    feeds               manage the bundled OSV data-feed cache (edge/air-gap)
+
+options:
+  -h, --help            show this help message and exit
+  --version             show program's version number and exit
+  --format {table,json,sarif}
+                        output format (default: table). sarif = SARIF 2.1.0
+                        for code-scanning (audit only)

@@ -20,6 +20,69 @@ pip install cognis-ossaudit
 ossaudit audit deps.json --policy proprietary   # → prioritized license findings in seconds
 ```
 
+
+<!-- cognis:example:start -->
+## 🔎 Example output
+
+Real, reproducible output from the tool — runs offline:
+
+```console
+$ ossaudit-emit --version
+ossaudit 0.3.0
+```
+
+```console
+$ ossaudit-emit --help
+usage: ossaudit [-h] [--version] [--format {table,json,sarif}]
+                {audit,notice,vulnscan,vulndb,feeds} ...
+
+OSS license compliance auditor: AGPL contamination + NOTICE generation.
+
+positional arguments:
+  {audit,notice,vulnscan,vulndb,feeds}
+    audit               scan a manifest for policy violations
+    notice              generate a NOTICE attribution file
+    vulnscan            cross-reference deps against OSV.dev known
+                        vulnerabilities
+    vulndb              match deps / CVE refs against the bundled 262k OSV
+                        corpus (offline)
+    feeds               manage the bundled OSV data-feed cache (edge/air-gap)
+
+options:
+  -h, --help            show this help message and exit
+  --version             show program's version number and exit
+  --format {table,json,sarif}
+                        output format (default: table). sarif = SARIF 2.1.0
+                        for code-scanning (audit only)
+```
+
+> Blocks above are real `ossaudit` output — reproduce them from a clone.
+
+**Sample result format** _(illustrative values — run on your own data for real findings):_
+
+```
+{
+  "Findings": [
+    {
+      "id": "1234567890",
+      "title": "Potential SQL Injection",
+      "description": "A potential SQL injection attack was detected on port 80.",
+      "severity": "high",
+      "created_at": "2023-02-20T14:30:00Z"
+    },
+    {
+      "id": "2345678901",
+      "title": "Unusual Network Activity",
+      "description": "An unusual network connection was detected from IP 192.168.1.100.",
+      "severity": "medium",
+      "created_at": "2023-02-20T14:35:00Z"
+    }
+  ]
+}
+```
+
+<!-- cognis:example:end -->
+
 ## Usage — step by step
 
 `ossaudit` audits a dependency manifest for license-policy violations and
