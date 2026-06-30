@@ -219,7 +219,7 @@ VIOLATION 5    analytics-sdk           1.2.0       AGPL-3.0-only
 VIOLATION 5    mongo-driver            2.0.0       SSPL-1.0
 VIOLATION 4    chart-lib               4.1.0       GPL-3.0-only
 VIOLATION 3    legacy-thing            0.9.9       NOASSERTION
-ok        1    requests                2.32.3      Apache-2.0
+ok        1    requests                2.32.3      COCL (Cognis Open Collaboration License)
 ...
 RESULT: FAIL          # exit code 2
 ```
